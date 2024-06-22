@@ -241,6 +241,21 @@ async function run() {
             res.send(result)
         })
 
+        // search reg camp
+        app.get('/search-camp-reg', async (req, res) => {
+            const search = req.query.search;
+            let query = {
+                $or: [
+                    { participant_name: { $regex: search, $options: 'i' } },
+                    { location: { $regex: search, $options: 'i' } },
+                    { dateTime: { $regex: search, $options: 'i' } },
+                    { healthcareProfessional: { $regex: search, $options: 'i' } }
+                ]
+            }
+            const result = await participantsCollection.find(query).toArray()
+            res.send(result)
+        })
+
         // Join camp Participants
         app.post('/joinCamp', verifyToken, async (req, res) => {
             const participant = req.body;
