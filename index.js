@@ -19,7 +19,7 @@ app.use(cookieParser())
 // Our middleware and verify token
 
 const verifyToken = (req, res, next) => {
-    console.log('inside verify token', req.headers)
+    // console.log('inside verify token', req.headers)
     if (!req.headers.authorization) {
         return res.status(401).send({ message: 'forbidden access' })
     }
@@ -336,7 +336,7 @@ async function run() {
         app.post("/create-payment-intent", async (req, res) => {
             const { paymentFee } = req.body;
             const amount = parseInt(paymentFee * 100);
-            console.log('amount inside the intent', amount)
+            // console.log('amount inside the intent', amount)
 
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
@@ -362,6 +362,17 @@ async function run() {
             res.send(result)
 
         })
+
+        app.get('/paymentHistory/:email', verifyToken, async (req, res) => {
+            const email = req.params.email;
+            // console.log("ppppp", email)
+            const query ={ email: email}
+            const result = await paymentCollection.find(query).toArray()
+            // console.log(result)
+            res.send(result)
+
+        })
+
         app.patch('/paymentStatus/:id', async (req, res) => {
             const id = req.params.id;
             const payment = req.body;
@@ -384,12 +395,32 @@ async function run() {
         // feedback api
         app.post('/feedback', verifyToken, async(req, res)=>{
             const feedback = req.body;
-            console.log(feedback)
+            // console.log(feedback)
             const result = await feedbackCollection.insertOne(feedback)
             res.send(result)
         })
         app.get('/feedback', async(req, res)=>{
             const result = await feedbackCollection.find().toArray()
+            res.send(result)
+        })
+
+        // All searching api's
+        app.get('/search-payment/:email', async (req, res) => {
+            const search = req.query.search;
+            const email = req.params.email;
+            console.log(search, email)
+            let query = {
+                email: email,
+                $or: [
+                    {name: { $regex: search, $options: 'i' }},
+                    // {location: { $regex: search, $options: 'i' }},
+                    // {dateTime: { $regex: search, $options: 'i' }},
+                    // {fee: { $regex: search, $options: 'i' }},
+                    // {healthcareProfessional: { $regex: search, $options: 'i' }}
+                ]
+            }
+            const result = await paymentCollection.find(query).toArray()
+            console.log('search result payment', result)
             res.send(result)
         })
 
@@ -401,9 +432,9 @@ async function run() {
         app.patch('/update/:id', async (req, res) => {
             const id = req.params.id;
             const jobInfo = req.body;
-            console.log(req.body)
+            // console.log(req.body)
             const query = { _id: new ObjectId(id) }
-            console.log(jobInfo)
+            // console.log(jobInfo)
             const updateDoc = {
                 $set: jobInfo
             }
