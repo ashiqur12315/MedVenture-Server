@@ -246,7 +246,7 @@ async function run() {
             const search = req.query.search;
             let query = {
                 $or: [
-                    { participant_name: { $regex: search, $options: 'i' } },
+                    { name: { $regex: search, $options: 'i' } },
                     { location: { $regex: search, $options: 'i' } },
                     { dateTime: { $regex: search, $options: 'i' } },
                     { healthcareProfessional: { $regex: search, $options: 'i' } }
