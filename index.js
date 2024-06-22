@@ -98,6 +98,7 @@ async function run() {
         const userCollection = client.db('MedVenture').collection('users')
         const paymentCollection = client.db('MedVenture').collection('paymentHistory')
         const feedbackCollection = client.db('MedVenture').collection('feedback')
+        const subscribeCollection = client.db('MedVenture').collection('subscribe')
 
         const verifyAdmin = async (req, res, next) => {
             const email = req.decoded.email;
@@ -361,6 +362,12 @@ async function run() {
             }
             const result = await paymentCollection.find(query).toArray()
             console.log('search result payment', result)
+            res.send(result)
+        })
+
+        app.post('/sub', async(req, res)=>{
+            const message = req.body
+            const result = await subscribeCollection.insertOne()
             res.send(result)
         })
 
