@@ -11,8 +11,7 @@ const port = process.env.PORT || 9000;
 
 //middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://a-11-job-marketplace.web.app', 'https://a-11-job-marketplace.firebaseapp.com'],
-    credentials: true
+    origin: ['http://localhost:5173', 'https://medventure-9cc22.web.app', 'https://medventure-9cc22.firebaseapp.com']
 }));
 app.use(express.json());
 app.use(cookieParser())
@@ -167,6 +166,7 @@ async function run() {
         const participantsCollection = client.db('MedVenture').collection('campParticipants')
         const userCollection = client.db('MedVenture').collection('users')
         const paymentCollection = client.db('MedVenture').collection('paymentHistory')
+        const feedbackCollection = client.db('MedVenture').collection('feedback')
 
         const verifyAdmin = async (req, res, next) => {
             const email = req.decoded.email;
@@ -378,6 +378,14 @@ async function run() {
         app.delete('/cancelCamp/:id', verifyToken, async (req, res) => {
             const id = req.params.id;
             const result = await participantsCollection.deleteOne({ _id: new ObjectId(id) })
+            res.send(result)
+        })
+
+        // feedback api
+        app.post('/feedback', verifyToken, async(req, res)=>{
+            const feedback = req.body;
+            console.log(feedback)
+            const result = await feedbackCollection.insertOne(feedback)
             res.send(result)
         })
 
