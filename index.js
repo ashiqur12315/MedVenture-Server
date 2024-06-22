@@ -376,18 +376,7 @@ async function run() {
 
         //update a job
 
-        app.patch('/update/:id', async (req, res) => {
-            const id = req.params.id;
-            const jobInfo = req.body;
-            // console.log(req.body)
-            const query = { _id: new ObjectId(id) }
-            // console.log(jobInfo)
-            const updateDoc = {
-                $set: jobInfo
-            }
-            const result = await jobCOllection.updateOne(query, updateDoc)
-            res.send(result)
-        })
+        
 
 
 
