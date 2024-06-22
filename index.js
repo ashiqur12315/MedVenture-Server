@@ -299,10 +299,10 @@ async function run() {
             const search = req.query.search;
             let query = {
                 $or: [
-                    {name: { $regex: search, $options: 'i' }},
-                    {location: { $regex: search, $options: 'i' }},
-                    {dateTime: { $regex: search, $options: 'i' }},
-                    {healthcareProfessional: { $regex: search, $options: 'i' }}
+                    { name: { $regex: search, $options: 'i' } },
+                    { location: { $regex: search, $options: 'i' } },
+                    { dateTime: { $regex: search, $options: 'i' } },
+                    { healthcareProfessional: { $regex: search, $options: 'i' } }
                 ]
             }
             const result = await popularCampsCollection.find(query).toArray()
@@ -366,7 +366,7 @@ async function run() {
         app.get('/paymentHistory/:email', verifyToken, async (req, res) => {
             const email = req.params.email;
             // console.log("ppppp", email)
-            const query ={ email: email}
+            const query = { email: email }
             const result = await paymentCollection.find(query).toArray()
             // console.log(result)
             res.send(result)
@@ -393,31 +393,40 @@ async function run() {
         })
 
         // feedback api
-        app.post('/feedback', verifyToken, async(req, res)=>{
+        app.post('/feedback', verifyToken, async (req, res) => {
             const feedback = req.body;
             // console.log(feedback)
             const result = await feedbackCollection.insertOne(feedback)
             res.send(result)
         })
-        app.get('/feedback', async(req, res)=>{
+        app.get('/feedback', async (req, res) => {
             const result = await feedbackCollection.find().toArray()
             res.send(result)
         })
 
         // All searching api's
+
         app.get('/search-payment/:email', async (req, res) => {
             const search = req.query.search;
             const email = req.params.email;
-            console.log(search, email)
-            let query = {
-                email: email,
-                $or: [
-                    {name: { $regex: search, $options: 'i' }},
-                    // {location: { $regex: search, $options: 'i' }},
-                    // {dateTime: { $regex: search, $options: 'i' }},
-                    // {fee: { $regex: search, $options: 'i' }},
-                    // {healthcareProfessional: { $regex: search, $options: 'i' }}
-                ]
+
+            let query = { email: email }
+
+            if (search) {
+                query = {
+                    $and: [
+                        { email: email },
+                        {
+                            $or: [
+                                { name: { $regex: search, $options: 'i' } },
+                                // {location: { $regex: search, $options: 'i' }},
+                                // {dateTime: { $regex: search, $options: 'i' }},
+                                {fee: { $regex: search, $options: 'i' }},
+                                // {healthcareProfessional: { $regex: search, $options: 'i' }}
+                            ]
+                        }
+                    ]
+                }
             }
             const result = await paymentCollection.find(query).toArray()
             console.log('search result payment', result)
@@ -442,7 +451,7 @@ async function run() {
             res.send(result)
         })
 
-        
+
 
 
 
