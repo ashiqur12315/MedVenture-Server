@@ -367,7 +367,7 @@ async function run() {
 
         app.post('/sub', async(req, res)=>{
             const message = req.body
-            const result = await subscribeCollection.insertOne()
+            const result = await subscribeCollection.insertOne(message)
             res.send(result)
         })
 
