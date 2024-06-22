@@ -301,6 +301,7 @@ async function run() {
                 $or: [
                     {name: { $regex: search, $options: 'i' }},
                     {location: { $regex: search, $options: 'i' }},
+                    {dateTime: { $regex: search, $options: 'i' }},
                     {healthcareProfessional: { $regex: search, $options: 'i' }}
                 ]
             }
@@ -398,30 +399,7 @@ async function run() {
             res.send(result)
         })
 
-        //update a job count of job applicants
-        app.patch('/job-count/:id', async (req, res) => {
-            const id = req.params.id;
-
-
-            const result = await jobCOllection.updateOne({ _id: new ObjectId(id) }, {
-                $inc: { job_applicants_number: 1 } // Increment by 1
-            })
-            // const query = { _id: new ObjectId(id) }
-
-            res.send(result)
-        })
-
-
-
-
-        //search job
-        app.get('/search-job', async (req, res) => {
-            const search = req.query.search;
-            let query = { job_title: { $regex: search, $options: 'i' } }
-            const result = await jobCOllection.find(query).toArray()
-            res.send(result)
-        })
-
+        
 
 
 
